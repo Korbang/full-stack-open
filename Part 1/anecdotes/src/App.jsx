@@ -11,13 +11,48 @@ const App = () => {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.',
     'The only way to go fast, is to go well.'
   ]
+
+  const votesArray = new Uint8Array(anecdotes.length)
    
   const [selected, setSelected] = useState(0)
+  const [votes,    setVotes]    = useState(votesArray)
+
+  const topIndex    = votes.indexOf(Math.max(...votes));
+  console.log('topIndex ', topIndex)
+
+  function getRandomInt(min, max) {
+    const minCeiled = Math.ceil(min);
+    const maxFloored = Math.floor(max);
+    return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
+  }
+
+  const nextAnecdote = () => {
+    const randomAnecdote = getRandomInt(0, anecdotes.length)
+    setSelected(randomAnecdote)
+  }
+
+  const vote = () => {
+    const copy      = [...votes]
+    copy[selected] += 1
+    setVotes(copy)
+  }
+  
 
   return (
-    <div>
-      {anecdotes[selected]}
-    </div>
+    <>
+      <h1>Anecdot of the day</h1>
+      <div>
+        {anecdotes[selected]}
+      </div>
+      <div>has {votes[selected]} votes</div>
+      <button onClick={vote}>vote</button>
+      <button onClick={nextAnecdote}>next anecdote</button>
+      <h1>Anecdot with most vote</h1>
+      <div>
+        {anecdotes[topIndex]}
+      </div>
+      <div>has {votes[topIndex]} votes</div>
+    </>
   )
 }
 
