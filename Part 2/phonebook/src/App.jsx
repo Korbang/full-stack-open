@@ -59,9 +59,23 @@ const App = () => {
       return;
     }
 
-    const nextId = persons.length > 0 ? Math.max(...persons.map(p => p.id)) + 1 : 1;
-    
-    setPersons(prevItems => [...prevItems, { name: newName, number: newNumber, id: nextId}]);
+    const recordObject = { 
+      name: newName, 
+      number: newNumber, 
+    };
+
+    axios
+      .post('http://localhost:3001/persons', recordObject)    
+      .then(response => {      
+        console.log(response.data)
+        setPersons(prevItems => [...prevItems, response.data])
+        setNewName('')
+        setNewNumber('')
+      });
+
+    //const nextId = persons.length > 0 ? Math.max(...persons.map(p => p.id)) + 1 : 1;
+
+    //setPersons(prevItems => [...prevItems, { name: newName, number: newNumber, id: nextId}]);
   }
 
   return (
