@@ -82,8 +82,17 @@ const App = () => {
           )
           setNewName('')
           setNewNumber('')
-          setErrorMessage('Added user');
+          setErrorMessage('Updated user');
           setErrorType('success');
+          setTimeout(() => {
+            setErrorMessage(null);
+            setErrorType(null);
+          }, 5000);
+        })
+        .catch(error => {
+          console.log(error)
+          setErrorMessage(`Information of ${updatedPersonObject.name} has already been removed`);
+          setErrorType('error');
           setTimeout(() => {
             setErrorMessage(null);
             setErrorType(null);
@@ -104,8 +113,17 @@ const App = () => {
         setPersons(prevItems => [...prevItems, data])
         setNewName('')
         setNewNumber('')
-        setErrorMessage('Updated user');
+        setErrorMessage('Added user');
         setErrorType('success');
+        setTimeout(() => {
+          setErrorMessage(null);
+          setErrorType(null);
+        }, 5000);
+      })
+      .catch(error => {
+        console.log(error)
+        setErrorMessage(`Could not add ${newPersonObject.name}`);
+        setErrorType('error');
         setTimeout(() => {
           setErrorMessage(null);
           setErrorType(null);
@@ -137,8 +155,18 @@ const App = () => {
         setTimeout(() => {
           setErrorMessage(null);
           setErrorType(null);
-        }, 5000);
+        }, 5000)
       })
+      .catch(error => {
+        console.log(error)
+        setErrorMessage(`Information of ${updatedPersonObject.name} has already been removed`);
+        setErrorType('error');
+        setTimeout(() => {
+          setErrorMessage(null);
+          setErrorType(null);
+        }, 5000);
+      });
+      
   };
 
   return (
