@@ -77,6 +77,24 @@ const App = () => {
     //setPersons(prevItems => [...prevItems, { name: newName, number: newNumber, id: nextId}]);
   }
 
+  const deletePerson = (id) => {
+    const personToDelete = persons.find(person => person.id === id);
+
+    const hasConfirmed = window.confirm(`Delte ${personToDelete.name}`);
+
+    if(!hasConfirmed) {
+      return;
+    }
+
+    personsService
+      .deletePersonRequest(id)
+      .then(data => {
+        setPersons(prevPersons =>
+          prevPersons.filter(person => person.id !== data.id)
+        );
+      })
+  };
+
   return (
     <div>
       <div>debug: {newName}</div>
@@ -91,7 +109,7 @@ const App = () => {
         handleNewNumber={(e) => setNewNumber(e.target.value)}
       />
       <Headline text={"Numbers"} />
-      <Persons persons={personsToShow}/>
+      <Persons persons={personsToShow} handle={deletePerson}/>
     </div>
   )
 }
