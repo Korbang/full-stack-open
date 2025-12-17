@@ -45,17 +45,43 @@ const App = () => {
     event.preventDefault();    
     console.log('button clicked', event.target)
 
+    if (newNumber === "") {
+      alert(`Number can be empty`);
+      return;
+    }
+
     const nameExists = persons.some(
       person => person.name === newName
     );
 
     if (nameExists) {
-      alert(`${newName} is already added to phonebook`);
-      return;
-    }
+      const hasConfirmed = window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`);
+      
+      if(!hasConfirmed) {
+        return;
+      }
 
-    if (newNumber === "") {
-      alert(`Number can be empty`);
+      const existingPerson = persons.find(p => p.name === newName);
+
+      const updatedPersonObject = {
+        ...existingPerson,
+        number: newNumber
+      };
+
+      personsService
+        .update(updatedPersonObject)
+        .then(updatedPerson => {
+          setPersons(prevPersons =>
+            prevPersons.map(person =>
+              person.id === updatedPerson.id
+                ? updatedPerson
+                : person
+            )
+          )
+          setNewName('')
+          setNewNumber('')
+        });
+
       return;
     }
 
