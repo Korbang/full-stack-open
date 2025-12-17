@@ -6,9 +6,16 @@ import Headline from './Headline'
 import { useEffect } from 'react'
 import axios from 'axios'
 import personsService from './services/persons'
+import Notification from './components/Notification'
+import './index.css'
 
 const App = () => {
   const [persons, setPersons] = useState([])
+  const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
+  const [filter, setFilter] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [errorType, setErrorType] = useState(null)
 
   /*
   const [persons, setPersons] = useState([
@@ -29,11 +36,6 @@ const App = () => {
 
     personsService.getAll().then(eventHandler)
   }, [])
-
-  const [newName, setNewName] = useState('')
-  const [newNumber, setNewNumber] = useState('')
-
-  const [filter, setFilter] = useState('')
   
   const personsToShow = filter === ''
     ? persons
@@ -80,6 +82,12 @@ const App = () => {
           )
           setNewName('')
           setNewNumber('')
+          setErrorMessage('Added user');
+          setErrorType('success');
+          setTimeout(() => {
+            setErrorMessage(null);
+            setErrorType(null);
+          }, 5000);
         });
 
       return;
@@ -96,6 +104,12 @@ const App = () => {
         setPersons(prevItems => [...prevItems, data])
         setNewName('')
         setNewNumber('')
+        setErrorMessage('Updated user');
+        setErrorType('success');
+        setTimeout(() => {
+          setErrorMessage(null);
+          setErrorType(null);
+        }, 5000);
       });
 
     //const nextId = persons.length > 0 ? Math.max(...persons.map(p => p.id)) + 1 : 1;
@@ -118,6 +132,12 @@ const App = () => {
         setPersons(prevPersons =>
           prevPersons.filter(person => person.id !== data.id)
         );
+        setErrorMessage('Deleted user');
+        setErrorType('success');
+        setTimeout(() => {
+          setErrorMessage(null);
+          setErrorType(null);
+        }, 5000);
       })
   };
 
@@ -125,6 +145,7 @@ const App = () => {
     <div>
       <div>debug: {newName}</div>
       <Headline text={"Phonebook"} />
+      <Notification message={errorMessage} type={errorType}/>
       <Filter filter={filter} handler={(e) => setFilter(e.target.value)} />
       <br />
       <Form 
