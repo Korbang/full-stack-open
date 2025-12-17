@@ -5,6 +5,7 @@ import Form from './Form'
 import Headline from './Headline'
 import { useEffect } from 'react'
 import axios from 'axios'
+import personsService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -21,13 +22,12 @@ const App = () => {
   useEffect(() => {
     console.log('effect')
 
-    const eventHandler = response => {
+    const eventHandler = initalData => {
       console.log('promise fulfilled')
-      setPersons(response.data)
+      setPersons(initalData)
     }
 
-    const promise = axios.get('http://localhost:3001/persons')
-    promise.then(eventHandler)
+    personsService.getAll().then(eventHandler)
   }, [])
 
   const [newName, setNewName] = useState('')
@@ -59,16 +59,15 @@ const App = () => {
       return;
     }
 
-    const recordObject = { 
+    const newPersonObject = { 
       name: newName, 
       number: newNumber, 
     };
 
-    axios
-      .post('http://localhost:3001/persons', recordObject)    
-      .then(response => {      
-        console.log(response.data)
-        setPersons(prevItems => [...prevItems, response.data])
+    personsService
+      .create(newPersonObject)
+      .then(data => {      
+        setPersons(prevItems => [...prevItems, data])
         setNewName('')
         setNewNumber('')
       });
