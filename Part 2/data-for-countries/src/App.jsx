@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useState } from 'react'
 import countryService from './services/countryService';
+import weatherService from './services/weather';
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -69,6 +70,21 @@ function Input({name, value, handle}) {
 }
 
 function CountryDetails({ country }) {
+  const [weather, setWeather] = useState(null);
+
+  const latlng = country.capitalInfo?.latlng || country.latlng; // fallback
+  const lat = latlng?.[0];
+  const lon = latlng?.[1];
+
+  useEffect(() => {
+    if (!lat || !lon) return;
+
+    weatherService
+      .getCurrent(lat, lon)
+      .then(current => setWeather(current))
+      .catch(() => setWeather(null));
+  }, [lat, lon]);
+
   return (
     <div>
       <h2>{country.name.common}</h2>
@@ -87,6 +103,18 @@ function CountryDetails({ country }) {
         alt={`Flag of ${country.name.common}`}
         width="150"
       />
+
+      <h2>Weather in {country.name.common}</h2>
+      {!lat || !lon ? (
+        <p>No coordinates available</p>
+      ) : !weather ? (
+        <p>Loading weather…</p>
+      ) : (
+        <>
+          <p>temperature: {weather.temperature} °C</p>
+          <p>wind: {weather.windspeed} m/s</p>
+        </>
+      )}
     </div>
   );
 }
