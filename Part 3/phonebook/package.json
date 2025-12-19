@@ -13,6 +13,9 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.2.1",
+    "mongodb": "^7.0.0",
+    "mongoos": "^0.0.1-security",
+    "mongoose": "^9.0.2",
     "morgan": "^1.10.1"
   },
   "devDependencies": {
