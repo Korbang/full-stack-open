@@ -11,7 +11,12 @@ morgan.token('body', (request) => {
 
 app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
-app.use(cors())
+
+if (process.env.NODE_ENV !== 'production') {
+  app.use(cors())
+}
+
+app.use(express.static('frontend/dist'))
 
 let persons = [
     { 
@@ -98,6 +103,10 @@ app.get('/info', (request, response) => {
         <p>Phonebook has info for ${numberOfPersonsInPhoneBook} people</p>
         <p>${receivedAt}</p>
     `);
+})
+
+app.get(/^(?!\/api).*$/, (req, res) => {
+  res.sendFile(path.resolve('frontend/dist/index.html'))
 })
 
 const PORT = process.env.PORT || 3001
