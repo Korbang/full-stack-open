@@ -84,9 +84,18 @@ const App = () => {
     if (ok) {
       personService
         .remove(person.id)
-        .then(() => setPersons(persons.filter((p) => p.id !== person.id)))
+        .then(() => {
+          setPersons(persons.filter((p) => p.id !== person.id));
 
-      notifyWith(`Deleted ${person.name}`)
+          notifyWith(`Deleted ${person.name}`)
+        })
+        .catch(error => {
+          console.log(error)
+          notifyWith(
+            `Error while deleting user ${person.name}`,
+            true
+          )
+        })
     }
   }
 
