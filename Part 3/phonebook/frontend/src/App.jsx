@@ -19,6 +19,8 @@ const App = () => {
     })
   }, [])
 
+  console.log(persons)
+
   const personsToShow = persons.filter((person) =>
     person.name.toLowerCase().includes(filter.toLowerCase())
   )
@@ -74,6 +76,13 @@ const App = () => {
         setPersons(persons.concat(createdPerson))
         notifyWith(`Added ${createdPerson.name}`)
         clearForm()
+      }).catch(error => {
+        // this is the way to access the error message
+        console.log(error.response.data.error)
+        notifyWith(
+          `${error.response.data.error}`,
+          true
+        )
       })
   }
 
@@ -82,9 +91,18 @@ const App = () => {
     if (ok) {
       personService
         .remove(person.id)
-        .then(() => setPersons(persons.filter((p) => p.id !== person.id)))
+        .then(() => {
+          setPersons(persons.filter((p) => p.id !== person.id));
 
-      notifyWith(`Deleted ${person.name}`)
+          notifyWith(`Deleted ${person.name}`)
+        })
+        .catch(error => {
+          console.log(error)
+          notifyWith(
+            `Error while deleting user ${person.name}`,
+            true
+          )
+        })
     }
   }
 
