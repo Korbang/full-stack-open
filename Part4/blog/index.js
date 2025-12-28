@@ -1,40 +1,7 @@
+const app = require('./app') // the actual Express application
 const config = require('./utils/config')
-const path = require('path')
-const express = require('express')
-const morgan = require('morgan')
-
-const app = express()
-
-morgan.token('body', (request) => {
-  return JSON.stringify(request.body)
-})
-
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
-
-app.use(express.json())
-
-const blogsRouter = require('./controllers/blogs')
-app.use('/api/blogs', blogsRouter)
-
-app.use((request, response)=> {
-  response.status(404).json({ error: 'unknown endpoint' })
-})
-
-
-const errorHandler = (error, request, response, next) => {
-    console.error(error.message)
-
-    if (error.name === 'CastError') {
-        return response.status(400).send({ error: 'malformatted id' })
-    } else if (error.name === 'ValidationError') {
-        return response.status(400).json({ error: error.message })
-    }
-
-    next(error)
-}
-
-app.use(errorHandler)
+const logger = require('./utils/logger')
 
 app.listen(config.PORT, () => {
-  console.log(`Server running on port ${config.PORT}`)
+  logger.info(`Server running on port ${config.PORT}`)
 })
