@@ -76,6 +76,13 @@ const App = () => {
         setPersons(persons.concat(createdPerson))
         notifyWith(`Added ${createdPerson.name}`)
         clearForm()
+      }).catch(error => {
+        // this is the way to access the error message
+        console.log(error.response.data.error)
+        notifyWith(
+          `${error.response.data.error}`,
+          true
+        )
       })
   }
 
