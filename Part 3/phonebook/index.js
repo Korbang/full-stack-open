@@ -47,7 +47,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
-    const id = request.params.id;
+    const id = request.params.id
 
     if(id === undefined) {
         return response.status(400).send({ error: 'id is undefined' })
@@ -80,7 +80,7 @@ app.post('/api/persons', (request, response, next) => {
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
-    const id = request.params.id;
+    const id = request.params.id
 
     if(id === undefined) {
         return response.status(400).send({ error: 'id is undefined' })
@@ -102,7 +102,7 @@ app.put('/api/persons/:id', (request, response, next) => {
 })
 
 app.get('/info', (request, response, next) => {
-    console.log(request);
+    console.log(request)
     const receivedAt = new Date()
 
     Person
@@ -126,7 +126,7 @@ const errorHandler = (error, request, response, next) => {
     if (error.name === 'CastError') {
         return response.status(400).send({ error: 'malformatted id' })
     } else if (error.name === 'ValidationError') {
-        return response.status(400).json({ error: error.message })  
+        return response.status(400).json({ error: error.message })
     }
 
     next(error)
