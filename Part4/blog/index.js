@@ -2,7 +2,6 @@ const config = require('./utils/config')
 const path = require('path')
 const express = require('express')
 const morgan = require('morgan')
-const mongoose = require('mongoose')
 
 const app = express()
 
@@ -12,32 +11,10 @@ morgan.token('body', (request) => {
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
-const blogSchema = mongoose.Schema({
-  title: String,
-  author: String,
-  url: String,
-  likes: Number,
-})
-
-const Blog = mongoose.model('Blog', blogSchema)
-
-mongoose.connect(config.MONGODB_URI, { family: 4 })
-
 app.use(express.json())
 
-app.get('/api/blogs', (request, response) => {
-  Blog.find({}).then((blogs) => {
-    response.json(blogs)
-  })
-})
-
-app.post('/api/blogs', (request, response) => {
-  const blog = new Blog(request.body)
-
-  blog.save().then((result) => {
-    response.status(201).json(result)
-  })
-})
+const blogsRouter = require('./controllers/blogs')
+app.use('/api/blogs', blogsRouter)
 
 app.use((request, response)=> {
   response.status(404).json({ error: 'unknown endpoint' })
