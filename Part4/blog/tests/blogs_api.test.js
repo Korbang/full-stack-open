@@ -85,6 +85,37 @@ describe('blog identifier', () => {
     })
 })
 
+describe('POST /api/blogs', () => {
+    test('a new blog can be added', async () => {
+        const newBlog = {
+            title: 'New test blog',
+            author: 'dev',
+            url: 'http://example.com/',
+            likes: 7,
+        }
+
+        const blogsBefore = await Blog.find({})
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+
+        const blogsAfter = await Blog.find({})
+        assert.strictEqual(blogsBefore.length + 1, blogsAfter.length)
+
+        const response = await api.get('/api/blogs')
+
+        const savedBlog = response.body.at(-1)
+
+        assert.strictEqual(savedBlog.title, newBlog.title)
+        assert.strictEqual(savedBlog.author, newBlog.author)
+        assert.strictEqual(savedBlog.url, newBlog.url)
+        assert.strictEqual(savedBlog.likes, newBlog.likes)
+
+    })
+})
+
 after(async () => {
     await mongoose.connection.close()
 })
