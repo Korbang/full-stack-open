@@ -1,5 +1,5 @@
 const assert = require('node:assert')
-const { test, after, beforeEach } = require('node:test')
+const { test, after, beforeEach, describe } = require('node:test')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
@@ -63,13 +63,26 @@ beforeEach(async () => {
     await Blog.insertMany(initialBlogs)
 })
 
-test('correct number of blogs are returned as json', async () => {
-    const response = await api
-        .get('/api/blogs')
-        .expect(200)
-        .expect('Content-Type', /application\/json/)
+describe('GET /api/blogs', () => {
+    test('correct number of blogs are returned as json', async () => {
+        const response = await api
+            .get('/api/blogs')
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
 
-    assert.strictEqual(response.body.length, initialBlogs.length)
+        assert.strictEqual(response.body.length, initialBlogs.length)
+    })
+})
+
+describe('blog identifier', () => {
+    test('blogs have id property instead of _id', async () => {
+        const response = await api.get('/api/blogs')
+
+        const blog = response.body[0]
+
+        assert.ok(blog.id)
+        assert.strictEqual(blog._id, undefined)
+    })
 })
 
 after(async () => {
