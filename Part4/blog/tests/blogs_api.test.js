@@ -160,6 +160,99 @@ describe('POST /api/blogs', () => {
   })
 })
 
+describe('DELETE /api/blogs/:id', () => {
+    test('succeeds with status 204 if id is valid', async () => {
+        const blogsAtStart = await Blog.find({})
+        const blogToDelete = blogsAtStart[0]
+
+        await api
+            .delete(`/api/blogs/${blogToDelete.id}`)
+            .expect(204)
+
+        const blogsAtEnd = await Blog.find({})
+        assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1)
+
+        const titles = blogsAtEnd.map(b => b.title)
+        assert.ok(!titles.includes(blogToDelete.title))
+    })
+
+    test('returns 404 if blog does not exist', async () => {
+        const validNonExistingId = '507f191e810c19729de860ea'
+
+        await api
+            .delete(`/api/blogs/${validNonExistingId}`)
+            .expect(404)
+    })
+
+    test('returns 400 if id is invalid', async () => {
+        const invalidId = '12345'
+
+        await api
+            .delete(`/api/blogs/${invalidId}`)
+            .expect(400)
+    })
+})
+
+describe('PUT /api/blogs/:id', () => {
+    test('update blog post', async () => {
+        const updatedBlog = {
+            title: 'Update test blog',
+            author: 'dev2',
+            url: 'http://example.com/update',
+            likes: 20,
+        }
+
+        const blogsBefore = await Blog.find({})
+        const id = blogsBefore[blogsBefore.length - 1]._id.toString()
+
+        await api
+            .put(`/api/blogs/${id}`)
+            .send(updatedBlog)
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+
+        const response = await api.get('/api/blogs')
+
+        const savedBlog = response.body.find(b => b.id === id)
+
+        assert.strictEqual(savedBlog.title, updatedBlog.title)
+        assert.strictEqual(savedBlog.author, updatedBlog.author)
+        assert.strictEqual(savedBlog.url, updatedBlog.url)
+        assert.strictEqual(savedBlog.likes, updatedBlog.likes)
+    })
+    
+    test('returns 404 if blog does not exist', async () => {
+        const validNonExistingId = '507f191e810c19729de860ea'
+        const updatedBlog = {
+            title: 'Update test blog',
+            author: 'dev2',
+            url: 'http://example.com/update',
+            likes: 20,
+        }
+
+        await api
+            .put(`/api/blogs/${validNonExistingId}`)
+            .send(updatedBlog)
+            .expect(404)
+    })
+
+    test('returns 400 if id is invalid', async () => {
+        const updatedBlog = {
+            title: 'Update test blog',
+            author: 'dev2',
+            url: 'http://example.com/update',
+            likes: 20,
+        }
+
+        await api
+            .put('/api/blogs/1234')
+            .send(updatedBlog)
+            .expect(400)
+    })
+})
+
+
+
 after(async () => {
     await mongoose.connection.close()
 })
