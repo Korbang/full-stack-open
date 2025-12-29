@@ -114,6 +114,24 @@ describe('POST /api/blogs', () => {
         assert.strictEqual(savedBlog.likes, newBlog.likes)
 
     })
+
+    test('if likes is missing, it defaults to 0', async () => {
+        const newBlog = {
+            title: 'New test blog no likes',
+            author: 'dev',
+            url: 'http://example.com/',
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(201)
+
+        const response = await api.get('/api/blogs')
+        const savedBlog = response.body.at(-1)
+
+        assert.strictEqual(savedBlog.likes, 0)
+  })
 })
 
 after(async () => {
